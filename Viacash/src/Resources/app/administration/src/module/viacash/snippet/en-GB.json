@@ -1,0 +1,14 @@
+{
+    "viacash": {
+        "resendButton": "Resend payment slip",
+        "confirmResend": "Resend payment slip to customer?",
+        "confirmButton": "Refund",
+        "confirmRefund": "Confirm refund?",
+        "title": "Viacash"
+    },
+    "api-test-button": {
+        "title": "API Test",
+        "success": "Connection was successfully tested for the following divisions: ",
+        "error": "Connection could not be established. Please check the access data."
+    }
+}

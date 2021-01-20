@@ -1,0 +1,41 @@
+{
+    "name": "s360/viacash",
+    "description": "Barzahlen / viacash",
+    "type": "shopware-platform-plugin",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Solution 360 GmbH",
+            "homepage": "https://www.solution360.de",
+            "role": "Manufacturer"
+        }
+    ],
+    "require": {
+        "shopware/core": ">=6.2.3",
+        "ext-json": "*",
+        "barzahlen/barzahlen-php": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "S360\\Viacash\\": "src/",
+            "Barzahlen\\": "vendor/barzahlen/barzahlen-php/src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "S360\\Viacash\\Viacash",
+        "plugin-icon": "src/Resources/config/viacash_Logo_RGB.png",
+        "copyright": "(c) by Solution 360 GmbH",
+        "label": {
+            "de-DE": "Barzahlen",
+            "en-GB": "viacash"
+        },
+        "description": {
+            "de-DE": "",
+            "en-GB": ""
+        },
+        "manufacturerLink": {
+            "de-DE": "https://www.solution360.de",
+            "en-GB": "https://www.solution360.de"
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "viacash": {
+        "resendButton": "Zahlschein erneut senden",
+        "confirmResend": "Zahlschein erneut an den Kunden senden?",
+        "confirmButton": "Erstatten",
+        "confirmRefund": "Betrag an Kunden erstatten?",
+        "title": "Barzahlen"
+    },
+    "api-test-button": {
+        "title": "API Test",
+        "success": "Verbindung wurde erfolgreich getestet mit folgenden Divisionen: ",
+        "error": "Verbindung konnte nicht hergestellt werden. Bitte prüfen Sie die Zugangsdaten."
+    }
+}

@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="S360\Viacash\Service\ViacashClient">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <argument type="service" id="language.repository"/>
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="Shopware\Core\System\StateMachine\StateMachineRegistry"/>
+            <argument type="service"
+                      id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+        </service>
+
+        <service id="S360\Viacash\Service\ViacashPaymentHandler">
+            <argument type="service"
+                      id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <argument type="service" id="session"/>
+            <argument type="service" id="order.repository"/>
+            <tag name="shopware.payment.method.sync"/>
+        </service>
+
+        <!-- SNIPPETS -->
+        <service id="S360\Viacash\Resources\snippet\en_GB\SnippetFile_en_GB" public="true">
+            <tag name="shopware.snippet.file"/>
+        </service>
+        <service id="S360\Viacash\Resources\snippet\de_DE\SnippetFile_de_DE" public="true">
+            <tag name="shopware.snippet.file"/>
+        </service>
+
+        <!-- CONTROLLER -->
+        <service id="S360\Viacash\Controller\ViacashHookController" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <argument type="service" id="order.repository"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="S360\Viacash\Controller\RefundController" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="order_line_item.repository"/>
+            <argument type="service"
+                      id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="S360\Viacash\Controller\ResendController" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <argument type="service" id="order.repository"/>
+            <argument type="service" id="order_line_item.repository"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="S360\Viacash\Controller\PingController" public="true">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="S360\Viacash\Subscriber\PaymentStateSubscriber">
+            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="S360\Viacash\Service\ViacashClient"/>
+            <argument type="service" id="order_transaction.repository"/>
+            <argument type="service" id="order.repository"/>
+            <argument type="service"
+                      id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+        </service>
+
+
+    </services>
+</container>

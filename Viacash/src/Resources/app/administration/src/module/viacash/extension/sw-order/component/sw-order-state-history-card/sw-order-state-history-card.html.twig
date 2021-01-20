@@ -1,0 +1,24 @@
+{% block sw_order_state_history_card_transaction %}
+    {% parent %}
+    <div v-if="isViacash" class="sw-order-state-card-entry">
+        <div>
+            <h2>{{ $tc('viacash.title') }}</h2>
+        </div>
+        <div v-if="maxRefundValue > 0">
+            <sw-number-field numberType="float"
+                             size="medium"
+                             max="maxRefundValue"
+                             v-model="refundValue">
+            </sw-number-field>
+            <sw-button @click="onConfirmRefund(refundValue, $tc('viacash.confirmRefund') )" variant="small"
+                       size="small">
+                {{ $tc('viacash.confirmButton') }}
+            </sw-button>
+        </div>
+        <div v-else>
+            <sw-button @click="onResend($tc('viacash.confirmResend') )" variant="small" size="small">
+                {{ $tc('viacash.resendButton') }}
+            </sw-button>
+        </div>
+    </div>
+{% endblock %}

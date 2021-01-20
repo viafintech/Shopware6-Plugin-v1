@@ -1,0 +1,25 @@
+{% sw_extends '@Storefront/storefront/page/checkout/finish/finish-details.html.twig' %}
+
+{% block page_checkout_finish_ordernumber %}
+    {{ parent() }}
+    {% if(page.order.customFields.custom_viacash_checkout_token) %}
+        <p style="height:50px; width:200px; margin-left:auto; margin-right:auto;">
+            <button class="bz-checkout-btn">
+                {{ "Viacash.layoutOpenerButton"|trans|striptags }}
+            </button>
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block page_checkout_finish_order_details %}
+    {{ parent() }}
+    {% if(page.order.customFields.custom_viacash_checkout_token) %}
+        <script
+            src="https://cdn.barzahlen.de/js/v2/checkout{{
+                page.order.customFields.custom_viacash_is_sandboxed ? '-sandbox' : ''
+            }}.js"
+            class="bz-checkout"
+            data-token="{{ page.order.customFields.custom_viacash_checkout_token }}">
+        </script>
+    {% endif %}
+{% endblock %}
