@@ -6,14 +6,20 @@
 
     <services>
 
+        <service id="S360\Viacash\Util\Logger" class="Monolog\Logger">
+            <factory service="Shopware\Core\Framework\Log\LoggerFactory" method="createRotating"/>
+            <argument type="string">s360_viacash</argument>
+        </service>
+
         <service id="S360\Viacash\Service\ViacashClient">
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <argument type="service" id="Doctrine\DBAL\Connection"/>
             <argument type="service" id="language.repository"/>
             <argument type="service" id="order.repository"/>
             <argument type="service" id="Shopware\Core\System\StateMachine\StateMachineRegistry"/>
-            <argument type="service"
-                      id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+            <argument type="service" id="Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStateHandler"/>
+            <argument type="service" id="S360\Viacash\Util\Logger"/>
+            <argument type="service" id="Shopware\Storefront\Framework\Routing\Router"/>
         </service>
 
         <service id="S360\Viacash\Service\ViacashPaymentHandler">

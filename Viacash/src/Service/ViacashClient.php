@@ -15,6 +15,7 @@ use Composer\Repository\RepositoryInterface;
 use DateTime;
 use Doctrine\DBAL\Connection;
 use Exception;
+use Monolog\Logger;
 use RuntimeException;
 use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressEntity;
 use Shopware\Core\Checkout\Customer\CustomerEntity;
@@ -32,6 +33,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineTransition\StateMachineTransitionActions;
 use Shopware\Core\System\StateMachine\StateMachineRegistry;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
+use Shopware\Storefront\Framework\Routing\Router;
 
 /**
  *
@@ -67,13 +69,22 @@ class ViacashClient
      */
     protected $transactionStateHandler;
 
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
+     * @var Router
+     */
+    protected $router;
+
     public const ACTION_TO_TRANSITION_METHOD_MAPPING = [
         StateMachineTransitionActions::ACTION_PAID => StateMachineTransitionActions::ACTION_PAID,
         StateMachineTransitionActions::ACTION_CANCEL => StateMachineTransitionActions::ACTION_CANCEL,
         StateMachineTransitionActions::ACTION_REFUND => StateMachineTransitionActions::ACTION_REFUND,
         StateMachineTransitionActions::ACTION_REFUND_PARTIALLY => 'refundPartially'
     ];
-
     public const ACTION_TO_STATUS_MAPPING = [
         StateMachineTransitionActions::ACTION_PAID => OrderTransactionStates::STATE_PAID,
         StateMachineTransitionActions::ACTION_CANCEL => OrderTransactionStates::STATE_CANCELLED,
@@ -82,13 +93,26 @@ class ViacashClient
     ];
 
 
+    /**
+     * ViacashClient constructor.
+     * @param SystemConfigService $systemConfigService
+     * @param Connection $connection
+     * @param EntityRepository $languageRepository
+     * @param EntityRepository $orderRepository
+     * @param StateMachineRegistry $stateMachineRegistry
+     * @param OrderTransactionStateHandler $transactionStateHandler
+     * @param Logger $logger ,
+     * @param Router $router
+     */
     public function __construct(
         SystemConfigService $systemConfigService,
         Connection $connection,
         EntityRepository $languageRepository,
         EntityRepository $orderRepository,
         StateMachineRegistry $stateMachineRegistry,
-        OrderTransactionStateHandler $transactionStateHandler
+        OrderTransactionStateHandler $transactionStateHandler,
+        Logger $logger,
+        Router $router
     ) {
         require_once __DIR__ . "/../../vendor/autoload.php";
 
@@ -98,6 +122,8 @@ class ViacashClient
         $this->orderRepository = $orderRepository;
         $this->stateMachineRegistry = $stateMachineRegistry;
         $this->transactionStateHandler = $transactionStateHandler;
+        $this->logger = $logger;
+        $this->router = $router;
     }
 
     /**
@@ -169,8 +195,8 @@ class ViacashClient
             $request->setCustomerLanguage($customerLocale);
         }
 
-
-        $request->setHookUrl('https://' . $_SERVER['SERVER_NAME'] . '/viacash/hook');
+        $url = $this->router->generate("frontend.viacash.hook", [], $this->router::ABSOLUTE_URL);
+        $request->setHookUrl($url);
 
         // For local testing:
         //$request->setHookUrl('https://xxxxxxxxxxx.ngrok.io/viacash/hook');
@@ -223,26 +249,26 @@ class ViacashClient
         $client = $this->getClient($viacashDivisionIdentifier);
 
         try {
-            $this->logging($request->getMethod() . ' (Division ' . $viacashDivisionIdentifier . '):' . $request->getPath(), false, false);
+            $this->logging($request->getMethod() . ' (Division ' . $viacashDivisionIdentifier . '):' . $request->getPath());
             if ($request->getBody()) {
-                $this->logging($request->getBody(), true, false);
+                $this->logging($request->getBody(), Logger::DEBUG);
             }
 
             // Handle response. Get string-encoded json or an exception
             $response = $client->handle($request);
 
-            $this->logging('RESPONSE: ' . $response, true, false);
+            $this->logging('RESPONSE: ' . $response, Logger::DEBUG);
 
             return json_decode($response, true);
         } catch (ApiException $e) {
             if ($iRetries) {
                 // If we have retries left, go again.
                 sleep(1);
-                $this->logging('Retrying last request', false, false);
+                $this->logging('Retrying last request');
                 return $this->executeRequest($viacashDivisionIdentifier, $request, --$iRetries);
             }
 
-            $this->logging($e->getMessage() . ' ' . $e->getTraceAsString(), false, true);
+            $this->logging($e->getMessage() . ' ' . $e->getTraceAsString(), Logger::ERROR);
             throw $e;
         }
     }
@@ -271,8 +297,9 @@ class ViacashClient
 
             $body = file_get_contents('php://input');
             $body = str_replace(["\r", '\r'], "", $body);
-            $message = "Webhook\n" . json_encode($header, JSON_PRETTY_PRINT) . PHP_EOL . (trim($body) ?: '-NO BODY-');
-            $this->logging($message, true, false);
+            $message = "Webhook\n" . json_encode($header, JSON_PRETTY_PRINT);
+            $this->logging($message);
+            $this->logging($body, Logger::DEBUG);
 
             $oBody = \json_decode($body, false);
 
@@ -286,7 +313,7 @@ class ViacashClient
             $effectedOrder = (object)$this->connection->fetchAssoc($sql, ["%{$oBody->slip->id}%"]);
             $effectedOrder->id = Uuid::fromBytesToHex($effectedOrder->id);
             $effectedOrder->custom_fields = \GuzzleHttp\json_decode($effectedOrder->custom_fields);
-            $this->logging('effected order: ' . $effectedOrder->order_number, true, false);
+            $this->logging('effected order: ' . $effectedOrder->order_number, Logger::DEBUG);
 
             /*
              * Let's talk about security.
@@ -306,7 +333,7 @@ class ViacashClient
             $webhook1 = new Webhook($apiKey);
 
             if ($webhook1->verify($header, $body)) {
-                $this->logging('Webhook authenticated.', true, false);
+                $this->logging('Webhook authenticated.', Logger::DEBUG);
 
                 // Determine what to do with that order
 
@@ -323,14 +350,14 @@ class ViacashClient
                     return true;
                 }
 
-                $this->logging("WEBHOOK UNKNOWN CALL EVENT {$oBody->event}", false, true);
+                $this->logging("WEBHOOK UNKNOWN CALL EVENT {$oBody->event}", Logger::ERROR);
                 return false;
             }
 
-            $this->logging("WEBHOOK FAILED VERIFICATION", false, true);
+            $this->logging("WEBHOOK FAILED VERIFICATION", Logger::ERROR);
             return false;
         } catch (Exception $e) {
-            $this->logging("WEBHOOK EXCEPTION" . $e, false, true);
+            $this->logging("WEBHOOK EXCEPTION" . $e, Logger::ERROR);
             return false;
         }
     }
@@ -413,9 +440,13 @@ class ViacashClient
         return $locale->getCode();
     }
 
-    public function logging($message, $verbose, $error): void
+    /**
+     * @param $message
+     * @param int $level Use a constant of Monolog/Logger
+     */
+    public function logging($message, $level = Logger::INFO): void
     {
-        if ($verbose && !$this->systemConfigService->get("Viacash.config.ViacashLogFullBodies")) {
+        if (Logger::DEBUG === $level && !$this->systemConfigService->get("Viacash.config.ViacashLogFullBodies")) {
             return;
         }
 
@@ -423,13 +454,7 @@ class ViacashClient
             $message = json_encode($message);
         }
 
-        if ($error) {
-            $message .= "##############\nERROR\n";
-        }
-
-        $message = date('c') . " " . $message . PHP_EOL . PHP_EOL;
-        $path = __DIR__ . "/../../../../../var/log/viacash.log";
-        file_put_contents($path, $message, FILE_APPEND | LOCK_EX);
+        $this->logger->addRecord($level, $message, ['x' => 123, 45]);
     }
 
     /**
@@ -517,7 +542,7 @@ class ViacashClient
             }
         }
 
-        $this->logging(($success ? 'Success' : 'Failed') . " marking order {$order->getId()} with transitionMethod $action.", false, !$success);
+        $this->logging(($success ? 'Success' : 'Failed') . " marking order {$order->getId()} with transitionMethod $action.", ($success ? Logger::INFO : Logger::ERROR));
 
         return $success;
     }
@@ -557,7 +582,7 @@ class ViacashClient
         );
 
         if (!$success) {
-            $this->logging('Cannot internally mark order as refundended: ' . $sOrderId, false, true);
+            $this->logging('Cannot internally mark order as refundended: ' . $sOrderId, Logger::ERROR);
             return false;
         }
 
