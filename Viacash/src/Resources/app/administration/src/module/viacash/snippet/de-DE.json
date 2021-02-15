@@ -10,5 +10,9 @@
         "title": "API Test",
         "success": "Verbindung wurde erfolgreich getestet mit folgenden Divisionen: ",
         "error": "Verbindung konnte nicht hergestellt werden. Bitte prüfen Sie die Zugangsdaten."
+    },
+    "refundamount": {
+        "mustbepositive": "Der zu erstattende Betrag muss größer Null sein.",
+        "mustbesmallerthan": "Der höchstmögliche zu erstattende Betrag ist "
     }
 }

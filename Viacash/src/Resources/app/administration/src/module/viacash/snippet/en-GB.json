@@ -10,5 +10,9 @@
         "title": "API Test",
         "success": "Connection was successfully tested for the following divisions: ",
         "error": "Connection could not be established. Please check the access data."
+    },
+    "refundamount": {
+        "mustbepositive": "The amount to be refunded must be positive and non-zero.",
+        "mustbesmallerthan": "The amount to be refunded must be less than or equal "
     }
 }

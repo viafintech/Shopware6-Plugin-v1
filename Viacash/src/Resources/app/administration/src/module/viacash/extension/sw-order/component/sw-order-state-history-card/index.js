@@ -29,7 +29,11 @@ Component.override('sw-order-state-history-card', {
     methods: {
 
         onConfirmRefund(refundValue, message) {
-            if (refundValue > 0 && refundValue <= this.order.customFields.custom_viacash_refundable_amount) {
+            if(refundValue <= 0) {
+                alert(this.$tc('refundamount.mustbepositive'));
+            } else if ( refundValue > this.order.customFields.custom_viacash_refundable_amount) {
+                alert(this.$tc('refundamount.mustbesmallerthan') + this.order.customFields.custom_viacash_refundable_amount);
+            } else {
                 if (confirm(message)) {
                     this.ViacashRefundService.refund({
                         orderId: this.order.id,

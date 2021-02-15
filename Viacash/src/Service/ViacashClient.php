@@ -178,9 +178,10 @@ class ViacashClient
         $request->setCustomerKey($customer->getEmail());
         $request->setCustomerCellPhone($address->getPhoneNumber());
         $request->setCustomerEmail($customer->getEmail());
-        $customerLocale = $this->getLocaleStringByLanguageId(
+        $customerLocale = strtolower($this->getLanguageStringByLanguageId(
             $salesChannelContext->getCustomer()->getLanguageId()
-        );
+        ));
+        $customerLocale .= '-' . strtoupper($salesChannelContext->getCustomer()->getActiveBillingAddress()->getCountry()->getIso());
 
         if (in_array($customerLocale,
             [
@@ -196,10 +197,11 @@ class ViacashClient
         }
 
         $url = $this->router->generate("frontend.viacash.hook", [], $this->router::ABSOLUTE_URL);
+        $url = str_replace('http://', 'https://', $url);
         $request->setHookUrl($url);
 
         // For local testing:
-        //$request->setHookUrl('https://xxxxxxxxxxx.ngrok.io/viacash/hook');
+        // $request->setHookUrl('https://1f367e87e13b.ngrok.io/viacash/hook');
 
         if ($this->systemConfigService->get("Viacash.config.ViacashSendCustomerAddress")) {
             $request->setAddress(array(
@@ -391,6 +393,14 @@ class ViacashClient
         return (bool)$this->systemConfigService->get("Viacash.config.ViacashDivision{$divisionIndex}IsSandbox");
     }
 
+    /**
+     * @return int
+     */
+    public function getValidityInDays(): int
+    {
+        return (int)$this->systemConfigService->get("Viacash.config.ViacashPaymentExpiresInDays");
+    }
+
     /////////////////////////////////////
 
     /**
@@ -423,7 +433,7 @@ class ViacashClient
      * @param string $languageId
      * @return string|null
      */
-    protected function getLocaleStringByLanguageId(string $languageId): ?string
+    protected function getLanguageStringByLanguageId(string $languageId): ?string
     {
         $languages = $this->languageRepository->search(
             (new Criteria([$languageId]))->addAssociation('locale'),
@@ -437,7 +447,7 @@ class ViacashClient
 
         $locale = $language->getLocale();
 
-        return $locale->getCode();
+        return substr($locale->getCode(),0,2);
     }
 
     /**
@@ -454,7 +464,7 @@ class ViacashClient
             $message = json_encode($message);
         }
 
-        $this->logger->addRecord($level, $message, ['x' => 123, 45]);
+        $this->logger->addRecord($level, $message);
     }
 
     /**

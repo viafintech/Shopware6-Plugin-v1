@@ -57,6 +57,14 @@ class Viacash extends Plugin
             'COUNTRYCODE' => 'GR',
             'LIMIT' => 500,
         ],
+        [
+            'COUNTRYCODE' => 'ES',
+            'LIMIT' => 1000,
+        ],
+        [
+            'COUNTRYCODE' => 'FR',
+            'LIMIT' => 1000,
+        ],
     ];
 
     public function install(InstallContext $context): void
@@ -201,7 +209,7 @@ class Viacash extends Plugin
             'active' => true,
             'translations' => [
                 'de-DE' => [
-                    'description' => 'Bezahlung per Barzahlen.',
+                    'description' => 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen/viacash-Partnerfiliale: www.barzahlen.de/filialfinder',
                     'name' => 'Barzahlen',
                 ],
                 'en-GB' => [
@@ -351,9 +359,9 @@ class Viacash extends Plugin
                         'type' => 'text',
                         "label" => ["de-DE" => "Barzahlen Checkout-Token", "en-GB" => "Viacash Checkout-Token"],
                         "translated" => true,
-                        "componentName"=> "sw-field",
-                        "customFieldType"=> "text",
-                        "customFieldPosition"=>1
+                        "componentName" => "sw-field",
+                        "customFieldType" => "text",
+                        "customFieldPosition" => 1
                     ],
                     'active' => true,
                 ],
@@ -372,9 +380,9 @@ class Viacash extends Plugin
                         'type' => 'text',
                         "label" => ["de-DE" => "Barzahlen Slip-ID", "en-GB" => "Viacash Slip-ID"],
                         "translated" => true,
-                        "componentName"=> "sw-field",
-                        "customFieldType"=> "text",
-                        "customFieldPosition"=>2
+                        "componentName" => "sw-field",
+                        "customFieldType" => "text",
+                        "customFieldPosition" => 2
                     ],
                     'active' => true,
                 ],
@@ -393,9 +401,9 @@ class Viacash extends Plugin
                         'type' => 'text',
                         "label" => ["de-DE" => "Interne Barzahlen Divisions-Nummer", "en-GB" => "Internal Viacash division number"],
                         "translated" => true,
-                        "componentName"=> "sw-field",
-                        "customFieldType"=> "text",
-                        "customFieldPosition"=>3
+                        "componentName" => "sw-field",
+                        "customFieldType" => "text",
+                        "customFieldPosition" => 3
                     ],
                     'active' => true,
                 ],
@@ -414,9 +422,9 @@ class Viacash extends Plugin
                         'type' => 'switch',
                         "label" => ["de-DE" => "Barzahlen Sandbox-Transaktion", "en-GB" => "Viacash sandboxed transaction"],
                         "translated" => true,
-                        "componentName"=> "sw-field",
-                        "customFieldType"=> "switch",
-                        "customFieldPosition"=>4
+                        "componentName" => "sw-field",
+                        "customFieldType" => "switch",
+                        "customFieldPosition" => 4
                     ],
                     'active' => true,
                 ],
@@ -435,9 +443,9 @@ class Viacash extends Plugin
                         'type' => 'number',
                         "label" => ["de-DE" => "Verbleibender per Barzahlen erstattbarer Betrag", "en-GB" => "Remaining amount that can be refunded with Viacash"],
                         "translated" => true,
-                        "componentName"=> "sw-field",
-                        "customFieldType"=> "number",
-                        "customFieldPosition"=>5
+                        "componentName" => "sw-field",
+                        "customFieldType" => "number",
+                        "customFieldPosition" => 5
                     ],
                     'active' => true,
                 ],
@@ -445,6 +453,26 @@ class Viacash extends Plugin
             Context::createDefaultContext()
         );
 
+        $this->container->get('custom_field.repository')->upsert(
+            [
+                [
+                    'id' => md5('custom_viacash_validity_days'),
+                    'customFieldSetId' => $custom_field_set_id,
+                    'name' => 'custom_viacash_validity_days',
+                    'type' => 'number',
+                    'config' => [
+                        'type' => 'number',
+                        "label" => ["de-DE" => "Gültigkeitsdauer des Zahlscheins in Tagen", "en-GB" => "Days of paylip validity."],
+                        "translated" => true,
+                        "componentName" => "sw-field",
+                        "customFieldType" => "number",
+                        "customFieldPosition" => 5
+                    ],
+                    'active' => true,
+                ],
+            ],
+            Context::createDefaultContext()
+        );
     }
 
 }

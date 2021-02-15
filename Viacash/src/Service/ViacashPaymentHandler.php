@@ -80,6 +80,7 @@ class ViacashPaymentHandler implements SynchronousPaymentHandlerInterface
             $customFields['custom_viacash_slip_id'] = $result["id"];
             $customFields['custom_viacash_refundable_amount'] = 0; // Filled upon payment callback
             $customFields['custom_viacash_is_sandboxed'] = $this->client->isCountrySandboxed($divisionCountryCode) ? "1" : "";
+            $customFields['custom_viacash_validity_days'] = (int)$this->client->getValidityInDays();
 
             $this->orderRepository->update([
                 [
