@@ -25,6 +25,7 @@ use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
 use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\Currency\Rule\CurrencyRule;
 
 class Viacash extends Plugin
 {
@@ -40,32 +41,44 @@ class Viacash extends Plugin
         [
             'COUNTRYCODE' => 'DE',
             'LIMIT' => 1000,
+            'CURRENCY' => 'EUR',
         ],
         [
             'COUNTRYCODE' => 'IT',
             'LIMIT' => 1000,
+            'CURRENCY' => 'EUR',
         ],
         [
             'COUNTRYCODE' => 'AT',
             'LIMIT' => 1000,
+            'CURRENCY' => 'EUR',
         ],
         [
             'COUNTRYCODE' => 'CH',
             'LIMIT' => 1500.01,
+            'CURRENCY' => 'CHF',
         ],
         [
             'COUNTRYCODE' => 'GR',
             'LIMIT' => 500,
+            'CURRENCY' => 'EUR',
         ],
         [
             'COUNTRYCODE' => 'ES',
             'LIMIT' => 1000,
+            'CURRENCY' => 'EUR',
         ],
         [
             'COUNTRYCODE' => 'FR',
             'LIMIT' => 1000,
+            'CURRENCY' => 'EUR',
         ],
     ];
+
+    /**
+     * @var ?string[]
+     */
+    protected $currencyIdCache = ['EUR' => null, 'CHF'=> null];
 
     public function install(InstallContext $context): void
     {
@@ -131,6 +144,16 @@ class Viacash extends Plugin
                         ],
                     ],
                     [
+                        'id' => md5('viacashrulecondition' . 'CURRENCY' . $countryId),
+                        'type' => (new CurrencyRule())->getName(),
+                        'value' => [
+                            'operator' => CurrencyRule::OPERATOR_EQ,
+                            'currencyIds' => [
+                                $this->getCurrencyId($rule['CURRENCY'], $context),
+                            ],
+                        ],
+                    ],
+                    [
                         'id' => md5('viacashrulecondition' . 'AMOUNT' . $countryId),
                         'type' => (new CartAmountRule())->getName(),
                         'value' => [
@@ -192,6 +215,25 @@ class Viacash extends Plugin
     {
         return md5($this->getRuleName());
     }
+
+    protected function getCurrencyId($iso2, Context $context) {
+
+        if(isset($this->currencyIdCache[$iso2]) && $this->currencyIdCache[$iso2]) {
+            return $this->currencyIdCache[$iso2];
+        }
+
+        /** @var EntityRepositoryInterface $currencyRepository */
+        $currencyRepository = $this->container->get('currency.repository');
+        $criteria = new Criteria();
+        $criteria->addFilter(
+            new EqualsFilter('isoCode', $iso2)
+        );
+        $this->currencyIdCache[$iso2] = $currencyRepository->searchIds($criteria, $context)->firstId();
+
+        return $this->currencyIdCache[$iso2];
+
+    }
+
 
     protected function addPaymentMethod(bool $active, Context $context): void
     {
