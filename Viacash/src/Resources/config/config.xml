@@ -9,7 +9,7 @@
             <name>ViacashPaymentExpiresInDays</name>
             <label>Days until payments expire</label>
             <label lang="de-DE">Gültigkeitsdauer des Zahlscheins in Tagen</label>
-            <defaultValue>9</defaultValue>
+            <defaultValue>14</defaultValue>
         </input-field>
         <input-field type="bool">
             <name>ViacashLogFullBodies</name>
@@ -42,28 +42,15 @@
             <name>ViacashDivision1Countries</name>
             <label>Division 1 countries?</label>
             <label lang="de-DE">Länderkürzel der Division</label>
-            <defaultValue>ch</defaultValue> <!-- TODO -->
         </input-field>
         <input-field>
             <name>ViacashDivision1Id</name>
             <label>Division 1 ID</label>
-            <defaultValue>20726</defaultValue> <!-- TODO -->
         </input-field>
         <input-field>
             <name>ViacashDivision1ApiKey</name>
             <label>Division 1 API-KEY</label>
-            <defaultValue>23997b614c0c019f8961f5a1b9233d3c3879ba15</defaultValue> <!-- TODO -->
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision1StoresApiKey</name>-->
-<!--            <label>Division 1 Stores-API-KEY</label>-->
-<!--            <defaultValue></defaultValue> -->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision1CallbackApiKey</name>-->
-<!--            <label>Division 1 Callback-API-KEY</label>-->
-<!--            <defaultValue></defaultValue> -->
-<!--        </input-field>-->
     </card>
 
     <card>
@@ -72,34 +59,21 @@
             <name>ViacashDivision2IsSandbox</name>
             <label>Division 2 is a sandbox?</label>
             <label lang="de-DE">Division ist im Test-Modus?</label>
-            <defaultValue>true</defaultValue> <!-- TODO -->
+            <defaultValue>true</defaultValue>
         </input-field>
         <input-field>
             <name>ViacashDivision2Countries</name>
             <label>Division 2 countries?</label>
             <label lang="de-DE">Länderkürzel der Division</label>
-            <defaultValue>de</defaultValue> <!-- TODO -->
         </input-field>
         <input-field>
             <name>ViacashDivision2Id</name>
             <label>Division 2 ID</label>
-            <defaultValue>84253</defaultValue> <!-- TODO -->
         </input-field>
         <input-field>
             <name>ViacashDivision2ApiKey</name>
             <label>Division 2 API-KEY</label>
-            <defaultValue>9f5a750769b5525b1671b07438a0b1659f44b74f</defaultValue> <!-- TODO -->
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision2StoresApiKey</name>-->
-<!--            <label>Division 2 Stores-API-KEY</label>-->
-<!--            <defaultValue></defaultValue>-->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision2CallbackApiKey</name>-->
-<!--            <label>Division 2 Callback-API-KEY</label>-->
-<!--            <defaultValue></defaultValue>-->
-<!--        </input-field>-->
      </card>
 
     <card>
@@ -123,14 +97,6 @@
             <name>ViacashDivision3ApiKey</name>
             <label>Division 3 API-KEY</label>
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision3StoresApiKey</name>-->
-<!--            <label>Division 3 Stores-API-KEY</label>-->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision3CallbackApiKey</name>-->
-<!--            <label>Division 3 Callback-API-KEY</label>-->
-<!--        </input-field>-->
     </card>
 
     <card>
@@ -154,14 +120,6 @@
             <name>ViacashDivision4ApiKey</name>
             <label>Division 4 API-KEY</label>
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision4StoresApiKey</name>-->
-<!--            <label>Division 4 Stores-API-KEY</label>-->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision4CallbackApiKey</name>-->
-<!--            <label>Division 4 Callback-API-KEY</label>-->
-<!--        </input-field>-->
     </card>
 
     <card>
@@ -185,14 +143,6 @@
             <name>ViacashDivision5ApiKey</name>
             <label>Division 5 API-KEY</label>
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision5StoresApiKey</name>-->
-<!--            <label>Division 5 Stores-API-KEY</label>-->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision5CallbackApiKey</name>-->
-<!--            <label>Division 5 Callback-API-KEY</label>-->
-<!--        </input-field>-->
     </card>
 
     <card>
@@ -216,14 +166,6 @@
             <name>ViacashDivision6ApiKey</name>
             <label>Division 6 API-KEY</label>
         </input-field>
-<!--        <input-field>-->
-<!--            <name>ViacashDivision6StoresApiKey</name>-->
-<!--            <label>Division 6 Stores-API-KEY</label>-->
-<!--        </input-field>-->
-<!--        <input-field>-->
-<!--            <name>ViacashDivision6CallbackApiKey</name>-->
-<!--            <label>Division 6 Callback-API-KEY</label>-->
-<!--        </input-field>-->
     </card>
 
 
