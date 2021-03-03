@@ -27,16 +27,20 @@
         "plugin-icon": "src/Resources/config/viacash_Logo_RGB.png",
         "copyright": "(c) by Solution 360 GmbH",
         "label": {
-            "de-DE": "Barzahlen",
-            "en-GB": "viacash"
+            "de-DE": "Barzahlen / viacash",
+            "en-GB": "viacash / Barzahlen"
         },
         "description": {
-            "de-DE": "",
-            "en-GB": ""
+            "de-DE": "Dieses Plugin stellt Ihnen Barzahlen / Viacash als Zahlungsart in Ihrem Shopware 6-Shop zur Verfügung.",
+            "en-GB": "This plugin provides your Shopware 6 shop with the payment method viacash / Barzahlen."
         },
         "manufacturerLink": {
             "de-DE": "https://www.solution360.de",
             "en-GB": "https://www.solution360.de"
+        },
+		"supportLink": {
+            "de-DE": "https://service.solution360.de",
+            "en-GB": "https://service.solution360.de"
         }
     }
 }
