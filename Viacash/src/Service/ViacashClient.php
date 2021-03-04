@@ -203,7 +203,7 @@ class ViacashClient
         // For local testing:
         // $request->setHookUrl('https://1f367e87e13b.ngrok.io/viacash/hook');
 
-        if ($this->systemConfigService->get("Viacash.config.ViacashSendCustomerAddress")) {
+        if ($this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashSendCustomerAddress")) {
             $request->setAddress(array(
                 'street_and_no' => $address->getStreet(),
                 'zipcode' => $address->getZipcode(),
@@ -212,7 +212,7 @@ class ViacashClient
             ));
         }
 
-        $days = (int)$this->systemConfigService->get("Viacash.config.ViacashPaymentExpiresInDays");
+        $days = (int)$this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashPaymentExpiresInDays");
         $days = max(min($days, 21), 0);
         $expire = new DateTime();
         $expire->modify("+{$days} day");
@@ -329,7 +329,7 @@ class ViacashClient
             // Verify callback
 
             $apiKey = $this->systemConfigService->get(
-                "Viacash.config.ViacashDivision" . $effectedOrder->custom_fields->custom_viacash_division_id . "ApiKey"
+                "ZerintBarzahlenViacash.config.ViacashDivision" . $effectedOrder->custom_fields->custom_viacash_division_id . "ApiKey"
             );
 
             $webhook1 = new Webhook($apiKey);
@@ -390,7 +390,7 @@ class ViacashClient
     public function isCountrySandboxed(string $country): bool
     {
         $divisionIndex = $this->getDivisionIndexByCountry($country);
-        return (bool)$this->systemConfigService->get("Viacash.config.ViacashDivision{$divisionIndex}IsSandbox");
+        return (bool)$this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashDivision{$divisionIndex}IsSandbox");
     }
 
     /**
@@ -398,7 +398,7 @@ class ViacashClient
      */
     public function getValidityInDays(): int
     {
-        return (int)$this->systemConfigService->get("Viacash.config.ViacashPaymentExpiresInDays");
+        return (int)$this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashPaymentExpiresInDays");
     }
 
     /////////////////////////////////////
@@ -417,9 +417,9 @@ class ViacashClient
         }
 
         $client = new Client(
-            $this->systemConfigService->get("Viacash.config.ViacashDivision{$divisionIndex}Id"),
-            $this->systemConfigService->get("Viacash.config.ViacashDivision{$divisionIndex}ApiKey"),
-            $this->systemConfigService->get("Viacash.config.ViacashDivision{$divisionIndex}IsSandbox")
+            $this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashDivision{$divisionIndex}Id"),
+            $this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashDivision{$divisionIndex}ApiKey"),
+            $this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashDivision{$divisionIndex}IsSandbox")
         );
 
         $client->setUserAgent('Shopware 6');
@@ -456,7 +456,7 @@ class ViacashClient
      */
     public function logging($message, $level = Logger::INFO): void
     {
-        if (Logger::DEBUG === $level && !$this->systemConfigService->get("Viacash.config.ViacashLogFullBodies")) {
+        if (Logger::DEBUG === $level && !$this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashLogFullBodies")) {
             return;
         }
 
@@ -488,7 +488,7 @@ class ViacashClient
         $divisionIndex = 0;
 
         for ($i = 1; $i <= 6; $i++) {
-            $allValidCountries = $this->systemConfigService->get("Viacash.config.ViacashDivision{$i}Countries");
+            $allValidCountries = $this->systemConfigService->get("ZerintBarzahlenViacash.config.ViacashDivision{$i}Countries");
             if ($allValidCountries) {
                 foreach (explode(',', $allValidCountries) as $validCountry) {
                     if ($country === strtolower($validCountry)) {

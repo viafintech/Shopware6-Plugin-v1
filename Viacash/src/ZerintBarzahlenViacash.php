@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace S360\Viacash;
 
-use Doctrine\DBAL\Connection;
 use S360\Viacash\Service\ViacashPaymentHandler;
 use Shopware\Core\Checkout\Cart\Rule\CartAmountRule;
 use Shopware\Core\Checkout\Customer\Rule\BillingCountryRule;
@@ -24,10 +23,9 @@ use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Plugin\Util\PluginIdProvider;
 use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
-use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Currency\Rule\CurrencyRule;
 
-class Viacash extends Plugin
+class ZerintBarzahlenViacash extends Plugin
 {
 
     public const AVAILABILITY_RULE_NAME = 'Viacash';

@@ -27,6 +27,10 @@
             <name>apiTest</name>
             <label>Test API connection</label>
             <label lang="de-DE">API Verbindung testen</label>
+            <slot lang="de-DE">API Verbindung testen.</slot>
+            <content lang="de-DE">API Verbindung testen?</content>
+            <caption lang="de-DE">API Verbindung testen!</caption>
+            <title lang="de-DE">API Verbindung testen:</title>
         </component>
     </card>
 
