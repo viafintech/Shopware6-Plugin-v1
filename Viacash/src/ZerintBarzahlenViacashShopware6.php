@@ -25,7 +25,7 @@ use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
 use Shopware\Core\System\Currency\Rule\CurrencyRule;
 
-class ZerintBarzahlenViacash extends Plugin
+class ZerintBarzahlenViacashShopware6 extends Plugin
 {
 
     public const AVAILABILITY_RULE_NAME = 'Viacash';

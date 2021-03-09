@@ -1,5 +1,5 @@
 {
-    "name": "zerint/barzahlenviacash",
+    "name": "zerint/barzahlenviacashshopware6",
     "description": "Barzahlen / viacash",
     "type": "shopware-platform-plugin",
     "license": "proprietary",
@@ -23,8 +23,8 @@
         }
     },
     "extra": {
-        "shopware-plugin-class": "S360\\Viacash\\ZerintBarzahlenViacash",
-        "plugin-icon": "src/Resources/config/viacash_Logo_RGB.png",
+        "shopware-plugin-class": "S360\\Viacash\\ZerintBarzahlenViacashShopware6",
+        "plugin-icon": "src/Resources/config/plugin.png",
         "copyright": "(c) by Solution 360 GmbH",
         "label": {
             "de-DE": "Barzahlen / viacash",
