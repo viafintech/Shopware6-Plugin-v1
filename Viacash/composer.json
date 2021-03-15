@@ -13,6 +13,8 @@
     ],
     "require": {
         "shopware/core": ">=6.2.3",
+        "shopware/administration": ">=6.2.3",
+        "shopware/storefront": ">=6.2.3",
         "ext-json": "*",
         "barzahlen/barzahlen-php": "^2.1"
     },
