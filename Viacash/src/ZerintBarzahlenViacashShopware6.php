@@ -76,7 +76,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
     /**
      * @var ?string[]
      */
-    protected $currencyIdCache = ['EUR' => null, 'CHF'=> null];
+    protected $currencyIdCache = ['EUR' => null, 'CHF' => null];
 
     public function install(InstallContext $context): void
     {
@@ -214,9 +214,9 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
         return md5($this->getRuleName());
     }
 
-    protected function getCurrencyId($iso2, Context $context) {
-
-        if(isset($this->currencyIdCache[$iso2]) && $this->currencyIdCache[$iso2]) {
+    protected function getCurrencyId($iso2, Context $context)
+    {
+        if (isset($this->currencyIdCache[$iso2]) && $this->currencyIdCache[$iso2]) {
             return $this->currencyIdCache[$iso2];
         }
 
@@ -229,7 +229,6 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
         $this->currencyIdCache[$iso2] = $currencyRepository->searchIds($criteria, $context)->firstId();
 
         return $this->currencyIdCache[$iso2];
-
     }
 
 
@@ -247,16 +246,18 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
             'pluginId' => $pluginId,
             'afterOrderEnabled' => false,
             'active' => true,
-            'translations' => [
-                'de-DE' => [
-                    'description' => 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen/viacash-Partnerfiliale: www.barzahlen.de/filialfinder',
-                    'name' => 'Barzahlen',
-                ],
-                'en-GB' => [
-                    'description' => 'Pay via cash with viacash.',
-                    'name' => 'viacash',
-                ],
-            ],
+            'translations' => $this->injectFallbackLanguage(
+                [
+                    'de-DE' => [
+                        'description' => 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen/viacash-Partnerfiliale: www.barzahlen.de/filialfinder',
+                        'name' => 'Barzahlen',
+                    ],
+                    'en-GB' => [
+                        'description' => 'After you complete your order, you will be shown a payment slip that you can print out or have sent to your mobile phone. Go to the nearest Barzahlen/viacash partner branch at viacash.com/storefinder and pay at the checkout in cash or your preferred payment method.',
+                        'name' => 'viacash',
+                    ],
+                ]
+            ),
         ];
 
         /** @var EntityRepositoryInterface $paymentRepository */
@@ -366,7 +367,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'id' => $custom_field_set_id,
                     'name' => 'custom_viacash',
                     'config' => [
-                        "label" => ["de-DE" => "Viacash", "en-GB" => "Viacash"],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Viacash", "en-GB" => "Viacash"]),
                         "translated" => true
                     ],
                     'active' => true,
@@ -387,7 +388,6 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
             Context::createDefaultContext()
         );
 
-
         $this->container->get('custom_field.repository')->upsert(
             [
                 [
@@ -397,7 +397,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'text',
                     'config' => [
                         'type' => 'text',
-                        "label" => ["de-DE" => "Barzahlen Checkout-Token", "en-GB" => "Viacash Checkout-Token"],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Barzahlen Checkout-Token", "en-GB" => "Viacash Checkout-Token"]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "text",
@@ -418,7 +418,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'text',
                     'config' => [
                         'type' => 'text',
-                        "label" => ["de-DE" => "Barzahlen Slip-ID", "en-GB" => "Viacash Slip-ID"],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Barzahlen Slip-ID", "en-GB" => "Viacash Slip-ID"]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "text",
@@ -439,7 +439,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'text',
                     'config' => [
                         'type' => 'text',
-                        "label" => ["de-DE" => "Interne Barzahlen Divisions-Nummer", "en-GB" => "Internal Viacash division number"],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Interne Barzahlen Divisions-Nummer", "en-GB" => "Internal Viacash division number"]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "text",
@@ -460,7 +460,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'switch',
                     'config' => [
                         'type' => 'switch',
-                        "label" => ["de-DE" => "Barzahlen Sandbox-Transaktion", "en-GB" => "Viacash sandboxed transaction"],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Barzahlen Sandbox-Transaktion", "en-GB" => "Viacash sandboxed transaction"]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "switch",
@@ -481,7 +481,10 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'number',
                     'config' => [
                         'type' => 'number',
-                        "label" => ["de-DE" => "Verbleibender per Barzahlen erstattbarer Betrag", "en-GB" => "Remaining amount that can be refunded with Viacash"],
+                        "label" => $this->injectFallbackLanguage([
+                            "de-DE" => "Verbleibender per Barzahlen erstattbarer Betrag",
+                            "en-GB" => "Remaining amount that can be refunded with Viacash",
+                        ]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "number",
@@ -502,7 +505,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                     'type' => 'number',
                     'config' => [
                         'type' => 'number',
-                        "label" => ["de-DE" => "Gültigkeitsdauer des Zahlscheins in Tagen", "en-GB" => "Days of paylip validity."],
+                        "label" => $this->injectFallbackLanguage(["de-DE" => "Gültigkeitsdauer des Zahlscheins in Tagen", "en-GB" => "Days of payslip validity."]),
                         "translated" => true,
                         "componentName" => "sw-field",
                         "customFieldType" => "number",
@@ -514,5 +517,32 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
             Context::createDefaultContext()
         );
     }
+
+    protected $cacheNeedLanguageFallback;
+    protected $cacheDefaultLocaleCode;
+
+    /**
+     * Copies english to the default language locale, in case it's not one of de-DE and en-GB.
+     * @param array $translations
+     * @return array
+     */
+    protected function injectFallbackLanguage(array $translations): array
+    {
+        if (!isset($this->cacheNeedLanguageFallback)) {
+            $repository = $this->container->get('language.repository');
+            $context = new Criteria([Defaults::LANGUAGE_SYSTEM]);
+            $context->addAssociation('locale');
+            $language = $repository->search($context, Context::createDefaultContext())->get(Defaults::LANGUAGE_SYSTEM);
+            $this->cacheDefaultLocaleCode = $language->getLocale()->getCode();
+            $this->cacheNeedLanguageFallback = !in_array($this->cacheDefaultLocaleCode, ['de-DE', 'en-GB']);
+        }
+
+        if ($this->cacheNeedLanguageFallback) {
+            $translations[$this->cacheDefaultLocaleCode] = $translations["en-GB"];
+        }
+        
+        return $translations;
+    }
+
 
 }
