@@ -124,8 +124,14 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
         $conditions = [];
 
         foreach (self::AVAILABILITY_RULES as $rule) {
+            
             $countryId = $this->getCountryId($rule['COUNTRYCODE'], $context);
             $countryLimit = (float)$rule['LIMIT'];
+            $currencyId = $this->getCurrencyId($rule['CURRENCY'], $context);
+
+            if (!$countryId || !$countryLimit || !$currencyId) {
+                continue;
+            }
 
             $conditions[] = [
                 'id' => md5('viacashrulecondition' . 'CONTAINER' . $countryId),
@@ -147,7 +153,7 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
                         'value' => [
                             'operator' => CurrencyRule::OPERATOR_EQ,
                             'currencyIds' => [
-                                $this->getCurrencyId($rule['CURRENCY'], $context),
+                                $currencyId
                             ],
                         ],
                     ],
@@ -214,21 +220,21 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
         return md5($this->getRuleName());
     }
 
-    protected function getCurrencyId($iso2, Context $context)
+    protected function getCurrencyId($iso3, Context $context)
     {
-        if (isset($this->currencyIdCache[$iso2]) && $this->currencyIdCache[$iso2]) {
-            return $this->currencyIdCache[$iso2];
+        if (isset($this->currencyIdCache[$iso3]) && $this->currencyIdCache[$iso3]) {
+            return $this->currencyIdCache[$iso3];
         }
 
         /** @var EntityRepositoryInterface $currencyRepository */
         $currencyRepository = $this->container->get('currency.repository');
         $criteria = new Criteria();
         $criteria->addFilter(
-            new EqualsFilter('isoCode', $iso2)
+            new EqualsFilter('isoCode', $iso3)
         );
-        $this->currencyIdCache[$iso2] = $currencyRepository->searchIds($criteria, $context)->firstId();
+        $this->currencyIdCache[$iso3] = $currencyRepository->searchIds($criteria, $context)->firstId();
 
-        return $this->currencyIdCache[$iso2];
+        return $this->currencyIdCache[$iso3];
     }
 
 
@@ -540,9 +546,8 @@ class ZerintBarzahlenViacashShopware6 extends Plugin
         if ($this->cacheNeedLanguageFallback) {
             $translations[$this->cacheDefaultLocaleCode] = $translations["en-GB"];
         }
-        
+
         return $translations;
     }
-
 
 }
