@@ -18,11 +18,23 @@ Component.override('sw-order-state-history-card', {
     ],
 
     data() {
+
+        let refundable = 0;
+        let token = '';
+
+        if (this.order.customFields && 'custom_viacash_refundable_amount' in this.order.customFields) {
+            refundable = parseInt(this.order.customFields.custom_viacash_refundable_amount);
+        }
+
+        if (this.order.customFields && 'custom_viacash_checkout_token' in this.order.customFields) {
+            token = Boolean(this.order.customFields.custom_viacash_checkout_token);
+        }
+
         return {
             isLoading: false,
-            refundValue: this.order.customFields.custom_viacash_refundable_amount,
-            maxRefundValue: 1.0 * (this.order.customFields.custom_viacash_refundable_amount),
-            isViacash: Boolean(this.order.customFields.custom_viacash_checkout_token),
+            refundValue: refundable,
+            maxRefundValue: refundable,
+            isViacash: token,
             askForRefundConfirmation: 0,
         };
     },
@@ -59,7 +71,7 @@ Component.override('sw-order-state-history-card', {
                 document.getElementById('refundErrors').innerHTML =
                     '<span style="background:#FFB9AD; color:red; padding: 8px">'
                     + this.$tc('refundamount.mustbesmallerthan')
-                    + this.order.customFields.custom_viacash_refundable_amount
+                    + parseInt(this.order.customFields.custom_viacash_refundable_amount)
                     + '</span>';
 
             } else {
